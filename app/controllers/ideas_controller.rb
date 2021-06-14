@@ -1,7 +1,6 @@
 class IdeasController < ApplicationController
-  
+  before_action :get_categories
   def index
-    categories = Category.all
     category_name = get_params[:category_name]
     if category_name.present? && categories.exists?(name: category_name)
       ideas = Idea.includes(:category)
@@ -14,7 +13,6 @@ class IdeasController < ApplicationController
   end
 
   def create
-    categories = Category.all
     unless categories.exists?(name: post_params[:category_name])
       Category.create(name: post_params[:category_name])
     end
@@ -35,5 +33,9 @@ class IdeasController < ApplicationController
   
   def post_params
     params.permit(:category_name, :body)
+  end
+
+  def get_categories
+    categories = Category.all
   end
 end

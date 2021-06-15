@@ -9,7 +9,7 @@ class IdeasController < ApplicationController
       render 'index', formats: :json, handlers: 'jbuilder'
     # category_nameが指定されているが、存在しない場合
     elsif category_name.present? && !@categories.exists?(name: category_name)
-      render status: 404
+      render status: 404, json: { status: 404, message: " Not Found"}
     # category_nameが指定されていない場合
     else
       @ideas = Idea.includes(:category)
@@ -26,6 +26,7 @@ class IdeasController < ApplicationController
     
     # アイデアの登録。バリデーションで弾かれた場合、ステータスコード422を返す。
     idea = Idea.new(category_id: category.id, body: post_params[:body])
+    
     if idea.save
       render json: idea, status: 201
     else

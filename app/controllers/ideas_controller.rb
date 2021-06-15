@@ -1,7 +1,7 @@
 class IdeasController < ApplicationController
-  before_action :get_categories, only: [:index, :create]
+  before_action :all_categories, only: [:index, :create]
   def index
-    category_name = get_params[:category_name]
+    category_name = permitted_params[:category_name]
     # category_nameが指定されていて、既に存在している場合
     if category_name.present? && @categories.exists?(name: category_name)
       ideas = Idea.includes(:category)
@@ -34,7 +34,7 @@ class IdeasController < ApplicationController
 
   private
 
-  def get_params
+  def permitted_params
     params.permit(:category_name)
   end
 
@@ -42,7 +42,7 @@ class IdeasController < ApplicationController
     params.permit(:category_name, :body)
   end
 
-  def get_categories
+  def all_categories
     @categories = Category.all
   end
 end

@@ -1,16 +1,18 @@
 class IdeasController < ApplicationController
   before_action :all_categories, only: [:index, :create]
   def index
-    category_name = permitted_params[:category_name]
+    category_name = params[:category_name]
     # category_nameが指定されていて、既に存在している場合
     if category_name.present? && @categories.exists?(name: category_name)
       ideas = Idea.includes(:category)
       @ideas = ideas.select { |idea| idea.category.name == category_name }
       render 'index', formats: :json, handlers: 'jbuilder'
-    # category_nameが指定されているが、存在しない場合
+
+      # category_nameが指定されているが、存在しない場合
     elsif category_name.present? && !@categories.exists?(name: category_name)
       render status: 404, json: { status: 404, message: ' Not Found' }
-    # category_nameが指定されていない場合
+
+      # category_nameが指定されていない場合
     else
       @ideas = Idea.includes(:category)
       render 'index', formats: :json, handlers: 'jbuilder'
@@ -34,12 +36,8 @@ class IdeasController < ApplicationController
 
   private
 
-  def permitted_params
-    params.permit(:category_name)
-  end
-
   def post_params
-    params.permit(:category_name, :body)
+    params.require(:idea).permit(:category_name, :body)
   end
 
   def all_categories

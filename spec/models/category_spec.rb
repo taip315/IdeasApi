@@ -17,6 +17,12 @@ RSpec.describe Category, type: :model do
         @category.valid?
         expect(@category.errors.full_messages).to include("Name can't be blank")
       end
+      it 'nameは重複して登録できない' do
+        @unique_category = FactoryBot.create(:category)
+        @another_category = FactoryBot.build(:category, name: @category_1.name)
+        @category_2.valid?
+        expect(@category_2.errors.full_messages).to include('Name has already been taken')
+      end
     end
   end
 end
